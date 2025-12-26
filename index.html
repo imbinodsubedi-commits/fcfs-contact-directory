@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FCFS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a1a;
+            min-height: 100vh;
+            padding: 20px;
+            color: #e0e0e0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+            letter-spacing: 1px;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.85;
+            color: #b0b0b0;
+        }
+
+        .section-wrapper {
+            margin-bottom: 30px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .section {
+            background: #2a2a2a;
+            border-radius: 12px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid #3a3a3a;
+        }
+
+        .section:hover {
+            box-shadow: 0 25px 60px rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+        }
+
+        .section-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.3s ease;
+        }
+
+        .section-header:hover {
+            padding: 20px;
+            box-shadow: inset 0 -2px 8px rgba(0,0,0,0.2);
+        }
+
+        .section-header h2 {
+            font-size: 1.5em;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-header h2 img {
+            height: 35px;
+            filter: brightness(0) invert(1);
+        }
+
+        .collapse-toggle {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+        }
+
+        .collapse-toggle:hover {
+            background: white;
+            color: #667eea;
+            transform: scale(1.1);
+        }
+
+        .section-content {
+            max-height: 5000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            min-height: 600px;
+        }
+
+        .section-content.collapsed {
+            max-height: 0;
+            min-height: 0;
+        }
+
+        .copy-btn {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .copy-btn:hover {
+            background: white;
+            color: #667eea;
+            transform: scale(1.05);
+        }
+
+        .copy-btn.copied {
+            background: #4caf50;
+            border-color: #4caf50;
+        }
+
+        .table-wrapper {
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        .compact-section .table-wrapper {
+            padding: 12px 20px;
+        }
+
+        .compact-section table {
+            font-size: 0.92em;
+        }
+
+        .compact-section th {
+            padding: 12px 15px;
+        }
+
+        .compact-section td {
+            padding: 10px 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #1a1a1a;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+            font-size: 0.95em;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 14px 15px;
+            border-bottom: 1px solid #3a3a3a;
+            color: #d0d0d0;
+        }
+
+        tr:hover {
+            background: #333333;
+            transition: background 0.2s ease;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .empty-cell {
+            color: #666;
+            font-style: italic;
+        }
+
+        .employee-name {
+            font-weight: 600;
+            color: #a0d8ff;
+            letter-spacing: 0.3px;
+        }
+
+        .phone-number {
+            color: #ffc107;
+            font-family: 'Courier New', monospace;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .simple-list {
+            padding: 20px;
+        }
+
+        .employee-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #3a3a3a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .employee-item:hover {
+            background: #333333;
+        }
+
+        .employee-item:last-child {
+            border-bottom: none;
+        }
+
+        .employee-name-text {
+            font-weight: 600;
+            color: #a0d8ff;
+        }
+
+        .employee-phone {
+            color: #ffc107;
+            font-family: 'Courier New', monospace;
+            font-weight: 500;
+        }
+
+        .section-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 10px;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .row-copy-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 6px 11px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-left: 8px;
+        }
+
+        .row-copy-btn:hover {
+            background: #764ba2;
+            transform: scale(1.08);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .row-copy-btn.copied {
+            background: #4caf50;
+        }
+
+        .note-badge {
+            background: #ff6b6b;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .note-badge.branch {
+            background: #4ecdc4;
+        }
+
+        .note-badge.team-head {
+            background: #f093fb;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        footer {
+            text-align: center;
+            color: #666;
+            margin-top: 40px;
+            padding: 20px;
+            border-top: 1px solid #3a3a3a;
+        }
+
+        .copy-icon::before {
+            content: '📋';
+        }
+
+        .copy-btn.copied .copy-icon::before {
+            content: '✓';
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .section-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+
+            table {
+                font-size: 0.9em;
+            }
+
+            th, td {
+                padding: 10px;
+            }
+
+            .row-copy-btn {
+                padding: 4px 8px;
+                font-size: 0.75em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img src="FCF-FOODS-LOGO-02.svg" alt="FCFS Logo" style="height: 80px; margin-bottom: 20px;">
+            <h1>FCFS Employee Directory</h1>
+            <p>Complete Contact Information</p>
+        </header>
+
+        <!-- HEAD OFFICE EMPLOYEES -->
+        <div class="section-wrapper">
+            <div class="section">
+                <div class="section-header" onclick="toggleCollapse(this)">
+                    <h2><img src="FCF-FOODS-LOGO-02.svg" alt="Logo">Head Office Staff - Contact Details</h2>
+                    <div class="collapse-toggle">▼</div>
+                </div>
+                <div class="section-content" id="head-office-employees">
+                    <div class="table-wrapper">
+                        <table>
+                        <thead>
+                            <tr>
+                                <th>S.No</th>
+                                <th>Name</th>
+                                <th>Personal Phone</th>
+                                <th>Office Phone</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td class="employee-name">Laxmi Paudel</td>
+                                <td class="phone-number">9802637012 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                                <td class="phone-number">9802847500 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td class="employee-name">Mira Bhattarai</td>
+                                <td class="phone-number">-</td>
+                                <td class="phone-number">9802847501 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td class="employee-name">Gate</td>
+                                <td class="phone-number">-</td>
+                                <td class="phone-number">9802847502 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td class="employee-name">Amar Basyal</td>
+                                <td class="phone-number">9849254022 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                                <td class="phone-number">9802847503 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td class="employee-name">Rajendra B.k</td>
+                                <td class="phone-number">9847038967 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                                <td class="phone-number">9802847504 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td class="employee-name">Santosh Neupane</td>
+                                <td class="phone-number">-</td>
+                                <td class="phone-number">9802847505 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td class="employee-name">Saurav Khanal</td>
+                                <td class="phone-number">9866951478 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                                <td class="phone-number">9802847506 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                            </tr>
+                            <tr>
+                                <td>8</td>
+                                <td class="employee-name">Karishma Subedi</td>
+                                <td class="phone-number">-</td>
+                                <td class="phone-number">9802847507 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                            </tr>
+                            <tr>
+                                <td>9</td>
+                                <td class="employee-name">Koshish Shrestha</td>
+                                <td class="phone-number">-</td>
+                                <td class="phone-number">9802847508 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                            </tr>
+                            <tr>
+                                <td>-</td>
+                                <td class="employee-name">-</td>
+                                <td class="phone-number">-</td>
+                                <td class="phone-number">9802847509 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                            </tr>
+                            <tr>
+                                <td>-</td>
+                                <td class="employee-name">-</td>
+                                <td class="phone-number">-</td>
+                                <td class="phone-number">9802847510 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                            </tr>
+                            <tr>
+                                <td>10</td>
+                                <td class="employee-name">Bel Kumari Kunwar</td>
+                                <td class="phone-number">9847147510 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                                <td class="phone-number">9802847511 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                            </tr>
+                            <tr>
+                                <td>11</td>
+                                <td class="employee-name">Akshay Kumar Chai</td>
+                                <td class="phone-number">-</td>
+                                <td class="phone-number">9802847512 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                            </tr>
+                            <tr>
+                                <td>12</td>
+                                <td class="employee-name">Dr.Shyam prd Dhakal</td>
+                                <td class="phone-number">-</td>
+                                <td class="phone-number">9802847513 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                            </tr>
+                            <tr>
+                                <td>13</td>
+                                <td class="employee-name">Suraj Bhusal</td>
+                                <td class="phone-number">9867024651 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                                <td class="phone-number">9802847514 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                            </tr>
+                            <tr>
+                                <td>14</td>
+                                <td class="employee-name">Mahesh Parajuli</td>
+                                <td class="phone-number">-</td>
+                                <td class="phone-number">9802847515 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                            </tr>
+                            <tr>
+                                <td>15</td>
+                                <td class="employee-name">Siddhartha khanal</td>
+                                <td class="phone-number">9866671421 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                                <td class="phone-number">9802847516 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                            </tr>
+                            <tr>
+                                <td>16</td>
+                                <td class="employee-name">Dewaki Shrestha</td>
+                                <td class="phone-number">-</td>
+                                <td class="phone-number">9802847517 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                            </tr>
+                            <tr>
+                                <td>-</td>
+                                <td class="employee-name">-</td>
+                                <td class="phone-number">-</td>
+                                <td class="phone-number">9802847518 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                            </tr>
+                            <tr>
+                                <td>17</td>
+                                <td class="employee-name">kamlesh Parmer</td>
+                                <td class="phone-number">9805847519 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                                <td class="phone-number">9802847519 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                            </tr>
+                            <tr>
+                                <td>-</td>
+                                <td class="employee-name">-</td>
+                                <td class="phone-number">-</td>
+                                <td class="phone-number">9802847520 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                            </tr>
+                            <tr>
+                                <td>18</td>
+                                <td class="employee-name">Shikhar Pandit</td>
+                                <td class="phone-number">9847917123 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                                <td class="phone-number">9802847521 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                            </tr>
+                            <tr>
+                                <td>19</td>
+                                <td class="employee-name">Nar Bahadur Thapa</td>
+                                <td class="phone-number">9847072289 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                                <td class="phone-number">9802847522 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                            </tr>
+                            <tr>
+                                <td>-</td>
+                                <td class="employee-name">-</td>
+                                <td class="phone-number">-</td>
+                                <td class="phone-number">9802847523 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                            </tr>
+                            <tr>
+                                <td>20</td>
+                                <td class="employee-name">Gandhi Chhetry</td>
+                                <td class="phone-number">-</td>
+                                <td class="phone-number">9802847524 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- KTM BHAISEPATI BRANCH -->
+        <div class="section-wrapper">
+            <div class="section">
+                <div class="section-header" onclick="toggleCollapse(this)">
+                    <h2><img src="FCF-FOODS-LOGO-02.svg" alt="Logo">KTM Bhaisepati Branch - Contact Details</h2>
+                    <div class="collapse-toggle">▼</div>
+                </div>
+                <div class="section-content">
+                    <div class="table-wrapper" id="ktm-branch">
+                        <table>
+                        <thead>
+                            <tr>
+                                <th>S.No</th>
+                                <th>Name</th>
+                                <th>Personal Phone</th>
+                                <th>Office Phone</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td class="employee-name">Sushil Kharel</td>
+                                <td class="phone-number">-</td>
+                                <td class="phone-number">9802847529 <button class="row-copy-btn" onclick="copyCellContent(this)">📋 Copy</button></td>
+                                <td><span class="note-badge branch">Pokhara</span></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td class="employee-name">Jyoti Shahi</td>
+                                <td class="phone-number">9863485022 <button class="row-copy-btn" onclick="copyCellContent(this)">📋 Copy</button></td>
+                                <td class="phone-number">-</td>
+                                <td><span class="note-badge">Resign</span></td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td class="employee-name">Avinash Adhikari</td>
+                                <td class="phone-number">9817835536 <button class="row-copy-btn" onclick="copyCellContent(this)">📋 Copy</button></td>
+                                <td class="phone-number">-</td>
+                                <td><span class="note-badge">Resign</span></td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td class="employee-name">Subham sharma Neupane</td>
+                                <td class="phone-number">-</td>
+                                <td class="phone-number">9802847527 <button class="row-copy-btn" onclick="copyCellContent(this)">📋 Copy</button></td>
+                                <td><span class="note-badge">Resign</span></td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td class="employee-name">Chani maya majhi</td>
+                                <td class="phone-number">9803904468 <button class="row-copy-btn" onclick="copyCellContent(this)">📋 Copy</button></td>
+                                <td class="phone-number">-</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td class="employee-name">Ashwin Joshi</td>
+                                <td class="phone-number">9803094621 <button class="row-copy-btn" onclick="copyCellContent(this)">📋 Copy</button></td>
+                                <td class="phone-number">-</td>
+                                <td><span class="note-badge">Resign</span></td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td class="employee-name">Sulav KC</td>
+                                <td class="phone-number">9845049243 <button class="row-copy-btn" onclick="copyCellContent(this)">📋 Copy</button></td>
+                                <td class="phone-number">9802847526 <button class="row-copy-btn" onclick="copyCellContent(this)">📋 Copy</button></td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>8</td>
+                                <td class="employee-name">Avinaya Ghimire</td>
+                                <td class="phone-number">-</td>
+                                <td class="phone-number">9802847531 <button class="row-copy-btn" onclick="copyCellContent(this)">📋 Copy</button></td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>9</td>
+                                <td class="employee-name">Raj Basnet</td>
+                                <td class="phone-number">9802847527 <button class="row-copy-btn" onclick="copyCellContent(this)">📋 Copy</button></td>
+                                <td class="phone-number">9802847532 <button class="row-copy-btn" onclick="copyCellContent(this)">📋 Copy</button></td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>10</td>
+                                <td class="employee-name">Sangeeta Barmashakha</td>
+                                <td class="phone-number">-</td>
+                                <td class="phone-number">9802847528 <button class="row-copy-btn" onclick="copyCellContent(this)">📋 Copy</button></td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>11</td>
+                                <td class="employee-name">Gandhi sir</td>
+                                <td class="phone-number">-</td>
+                                <td class="phone-number">9802847524 <button class="row-copy-btn" onclick="copyCellContent(this)">📋 Copy</button></td>
+                                <td>-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SALES TEAM -->
+        <div class="section-wrapper">
+            <div class="section">
+                <div class="section-header" onclick="toggleCollapse(this)">
+                    <h2><img src="FCF-FOODS-LOGO-02.svg" alt="Logo">Sales Team - Contact Details</h2>
+                    <div class="collapse-toggle">▼</div>
+                </div>
+                <div class="section-content">
+                    <div class="table-wrapper" id="sales-team">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>S.No</th>
+                                    <th>Name</th>
+                                    <th>Phone Number</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td class="employee-name">Gandhi Chhetry</td>
+                                    <td class="phone-number">9802847524 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                                    <td><span class="note-badge team-head">Team Head</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td class="employee-name">Suraj Maharjan</td>
+                                    <td class="phone-number">9849806207 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td class="employee-name">Raju Thapa</td>
+                                    <td class="phone-number">9861760867 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td class="employee-name">Kushal Shrestha</td>
+                                    <td class="phone-number">9808466390 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td class="employee-name">Ishwor Tamang</td>
+                                    <td class="phone-number">9801888755 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td class="employee-name">Bijay Shrestha</td>
+                                    <td class="phone-number">9842789082 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td class="employee-name">Nomi Gurung</td>
+                                    <td class="phone-number">-</td>
+                                    <td><span class="note-badge branch">Pokhara Branch</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTRACT EMPLOYEES -->
+        <div class="section-wrapper">
+            <div class="section">
+                <div class="section-header" onclick="toggleCollapse(this)">
+                    <h2><img src="FCF-FOODS-LOGO-02.svg" alt="Logo">Contract Employees - Contact Details</h2>
+                    <div class="collapse-toggle">▼</div>
+                </div>
+                <div class="section-content">
+                    <div class="table-wrapper" id="contract-employees">
+                        <table>
+                        <thead>
+                            <tr>
+                                <th>S.No</th>
+                                <th>Name</th>
+                                <th>Phone Number</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td class="employee-name">khagisara chauhan</td>
+                                <td class="phone-number">9764344719 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td class="employee-name">Yam prasad Pokharel</td>
+                                <td class="phone-number">9847257537 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td class="employee-name">Dhanimaya Thapa</td>
+                                <td class="phone-number">9819482003 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td class="employee-name">Teknarayan Shrestha</td>
+                                <td class="phone-number">9847209607 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td class="employee-name">Pramila kumari tharu</td>
+                                <td class="phone-number">9821040740 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td class="employee-name">Shiv Narayan Tharu</td>
+                                <td class="phone-number">-</td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td class="employee-name">Ram Murat Kewat</td>
+                                <td class="phone-number">9821471712 <button class="row-copy-btn" onclick="copyCellContent(this)">📋</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 FCFS Employee Directory. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        function toggleCollapse(header) {
+            const content = header.nextElementSibling;
+            const toggle = header.querySelector('.collapse-toggle');
+            
+            if (content.classList.contains('collapsed')) {
+                content.classList.remove('collapsed');
+                toggle.textContent = '▼';
+            } else {
+                content.classList.add('collapsed');
+                toggle.textContent = '▶';
+            }
+        }
+
+        function copyCellContent(button) {
+            // Get the phone number from the cell
+            const cell = button.parentElement;
+            const textToCopy = cell.textContent.replace('📋', '').replace('Copy', '').trim();
+
+            if (textToCopy === '-' || textToCopy === '') {
+                alert('No phone number to copy');
+                return;
+            }
+
+            // Copy to clipboard
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                button.classList.add('copied');
+                button.innerHTML = '✓ Copied!';
+
+                // Reset button after 2 seconds
+                setTimeout(() => {
+                    button.classList.remove('copied');
+                    button.innerHTML = '📋 Copy';
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                alert('Failed to copy to clipboard');
+            });
+        }
+
+        function copySection(sectionId) {
+            const section = document.getElementById(sectionId);
+            let textToCopy = '';
+
+            // Extract text content based on section type
+            if (sectionId === 'permanent-employees' || sectionId === 'contract-employees') {
+                // For tables
+                const table = section.querySelector('table');
+                const rows = table.querySelectorAll('tr');
+                rows.forEach(row => {
+                    const cells = row.querySelectorAll('td, th');
+                    const rowText = Array.from(cells).map(cell => cell.textContent.trim()).join('\t');
+                    textToCopy += rowText + '\n';
+                });
+            } else {
+                // For simple lists
+                const items = section.querySelectorAll('.employee-item');
+                items.forEach(item => {
+                    const text = item.textContent.trim();
+                    textToCopy += text + '\n';
+                });
+            }
+
+            // Copy to clipboard
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const button = event.target.closest('.copy-btn');
+                button.classList.add('copied');
+                button.innerHTML = '<span class="copy-icon"></span> Copied!';
+
+                // Reset button after 2 seconds
+                setTimeout(() => {
+                    button.classList.remove('copied');
+                    button.innerHTML = '<span class="copy-icon"></span> Copy';
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                alert('Failed to copy to clipboard');
+            });
+        }
+
+        // Add animation on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('.section-wrapper');
+            sections.forEach((section, index) => {
+                section.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+    </script>
+</body>
+</html>
